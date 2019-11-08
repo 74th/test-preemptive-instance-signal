@@ -1,0 +1,5 @@
+version: "3.7"
+services:
+  tester:
+    image: gcr.io/nnyn-dev/preemptice-tester:latest
+    build: ./tester
