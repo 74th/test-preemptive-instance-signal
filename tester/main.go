@@ -4,21 +4,26 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 )
 
-func stopForSyscall(duration int64, exitChan chan int) {
+func stopForSyscall(duration int64) {
 	if duration < 0 {
 		return
 	}
 	time.Sleep(time.Second * time.Duration(duration))
-	exitChan <- 0
 }
 
+type Server struct{}
+
+func (s *Server) ServeHTTP(res http.ResponseWriter, req *http.Request) {
+	res.WriteHeader(200)
+	res.Write([]byte("ok"))
+}
 func main() {
 	var stopDuration int64
 	var tickerDuration int64
@@ -30,10 +35,13 @@ func main() {
 	flag.IntVar(&exitCode, "e", 0, "exit code")
 	flag.Parse()
 
-	l, err := net.Listen("tcp", addr)
-	if err != nil {
-		log.Panicf("cannot listen %s :%s", addr, err.Error())
-	}
+	go func() {
+		sv := new(Server)
+		err := http.ListenAndServe(addr, sv)
+		if err != nil {
+			log.Panicf("cannot listen %s :%s", addr, err.Error())
+		}
+	}()
 
 	fmt.Println("START")
 
@@ -53,10 +61,8 @@ func main() {
 				switch s {
 				case syscall.SIGTERM:
 					fmt.Println("SIGTERM")
-					go stopForSyscall(stopDuration, exitChan)
 				case syscall.SIGKILL:
 					fmt.Println("SIGKILL")
-					go stopForSyscall(stopDuration, exitChan)
 				}
 			case <-ticker.C:
 				fmt.Println(time.Now().Format("2006/01/02 15:04:05"))
@@ -64,6 +70,5 @@ func main() {
 		}
 	}()
 	<-exitChan
-	l.Close()
 	os.Exit(exitCode)
 }

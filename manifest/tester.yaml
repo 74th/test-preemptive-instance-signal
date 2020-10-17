@@ -22,9 +22,11 @@ spec:
       containers:
         - name: tester
           readinessProbe:
-            tcpSocket:
+            httpGet:
+              path: /healthz
               port: 10000
             periodSeconds: 1
+            failureThreshold: 1
           image: gcr.io/nnyn-dev/preemptible-tester2/tester:latest
           command: ["./tester"]
           imagePullPolicy: Always
