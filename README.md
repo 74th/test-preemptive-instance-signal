@@ -1,23 +1,25 @@
-Test Preemptive Instance
+Test Preemptible Instance
 
-## ノードプールを0にして、新しいノードプールに移動させた時の挙動
+![](architecture.drawio.svg)
 
-- PodのIDは変わる
-- SIGTERMが送られる
-- SIGTERMが送られてから、すぐに別のノードでPodが起動する
+## ノードプールを 0 にして、新しいノードプールに移動させた時の挙動
+
+- Pod の ID は変わる
+- SIGTERM が送られる
+- SIGTERM が送られてから、すぐに別のノードで Pod が起動する
 
 ![](./delete_node.png)
 
-- 08:42:59 SIGTERMが送られる
-- 08:43:03 次のPodが作られる
-- 08:43:27 前のPodの最後のログ
+- 08:42:59 SIGTERM が送られる
+- 08:43:03 次の Pod が作られる
+- 08:43:27 前の Pod の最後のログ
 
 ## プリエンプティブインスタンスの挙動
 
-- NodeのIDは変わらない
-- PodのIDは変わらない
-- SIGTERMは送られない
-- いきなりKILLされてるっぽい
+- Node の ID は変わらない
+- Pod の ID は変わらない
+- SIGTERM は送られない
+- いきなり KILL されてるっぽい
 - 瞬断は防げない
 - ノードプールに複数ノードあっても、ずらしてくれたりしない
 
