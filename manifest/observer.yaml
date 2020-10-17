@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: observer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: observer
+  template:
+    metadata:
+      labels:
+        app: observer
+    spec:
+      serviceAccountName: observer
+      nodeSelector:
+        cloud.google.com/gke-nodepool: normal
+      containers:
+        - name: proxy
+          image: gcr.io/nnyn-dev/preemptible-tester2/observer:latest
+          imagePullPolicy: Always

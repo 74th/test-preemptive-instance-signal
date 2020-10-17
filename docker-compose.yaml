@@ -1,5 +1,12 @@
 version: "3.7"
 services:
   tester:
-    image: gcr.io/nnyn-dev/preemptice-tester:latest
-    build: ./tester
+    image: gcr.io/nnyn-dev/preemptible-tester2/tester:latest
+    build:
+      context: .
+      target: tester
+  observer:
+    image: gcr.io/nnyn-dev/preemptible-tester2/observer:latest
+    build:
+      context: .
+      target: observer

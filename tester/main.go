@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
+	"net"
 	"os"
 	"os/signal"
 	"syscall"
@@ -20,11 +22,18 @@ func stopForSyscall(duration int64, exitChan chan int) {
 func main() {
 	var stopDuration int64
 	var tickerDuration int64
+	var addr string
 	var exitCode int
 	flag.Int64Var(&stopDuration, "s", -1, "stop for syscall")
 	flag.Int64Var(&tickerDuration, "d", 5, "ticker")
+	flag.StringVar(&addr, "a", "0.0.0.0:10000", "addr")
 	flag.IntVar(&exitCode, "e", 0, "exit code")
 	flag.Parse()
+
+	l, err := net.Listen("tcp", addr)
+	if err != nil {
+		log.Panicf("cannot listen %s :%s", addr, err.Error())
+	}
 
 	fmt.Println("START")
 
@@ -55,5 +64,6 @@ func main() {
 		}
 	}()
 	<-exitChan
+	l.Close()
 	os.Exit(exitCode)
 }

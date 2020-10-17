@@ -1,0 +1,6 @@
+resources:
+  - tester.yaml
+  - observer-role.yaml
+  - observer-rolebinding.yaml
+  - observer-sa.yaml
+  - observer.yaml
